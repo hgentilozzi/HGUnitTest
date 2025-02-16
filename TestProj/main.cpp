@@ -8,6 +8,7 @@ public:
 	TSec1(TestObject* parent) : TestSection(__func__, parent) {}
 
 	void runTest(int level) override {
+		AssertLess<float>(1.25, 1.25, 1);
 	}
 };
 
