@@ -1,4 +1,5 @@
 export module TestUnit;
+import <memory>;
 import <string>;
 import TestObject;
 

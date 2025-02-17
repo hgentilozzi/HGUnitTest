@@ -3,13 +3,15 @@ import <string>;
 import <vector>;
 import <print>;
 import <chrono>;
+import <memory>;
 
 using namespace std::chrono;
-
 export class TestObject {
 public:
 
 	enum TestTypes { Section, Unit, Suite, Runner};
+	TestObject() = default;
+
 	TestObject(std::string name, TestTypes type, TestObject* parent=nullptr)
 		: m_Name(name) , m_Type(type), m_NumFails(0), m_Parent(parent)
 	{
@@ -64,13 +66,13 @@ public:
 
 	std::string& getName() { return m_Name; }
 
-	TestObject* getParent() {
-		return m_Parent;
-	}
+	//TestObject* getParent() {
+	//	return m_Parent;
+	//}
 
-	void setParent(TestObject* parent) {
-		m_Parent = parent;
-	}
+	//void setParent(TestObject* parent) {
+	//	m_Parent = parent;
+	//}
 
 	// virtuals
 	virtual void beforeTest() {};

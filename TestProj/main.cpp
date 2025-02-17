@@ -2,6 +2,7 @@ import TestRunner;
 import TestUnit;
 import TestSuite;
 import TestSection;
+import <memory>;
 
 class TSec1 : public TestSection {
 public:
@@ -12,20 +13,18 @@ public:
 	}
 };
 
-
-
 class Tu1 : public TestUnit {
 public:
-	Tu1(TestObject* parent) : TestUnit(__func__,parent) {}
-
-	void beforeTest() override {
+	Tu1(TestObject* parent) : TestUnit(__func__,parent) {
 		new TSec1(this);
 	}
 };
 
 class Tu2 : public TestUnit {
 public:
-	Tu2(TestObject* parent) : TestUnit(__func__,parent) {}
+	Tu2(TestObject* parent) : TestUnit(__func__,parent) {
+		new TSec2(this);
+	}
 
 	class TSec2 : public TestSection {
 	public:
@@ -35,25 +34,18 @@ public:
 			m_NumFails = 2;
 		}
 	};
-	void beforeTest() override {
-		new TSec2(this);
-	}
-
 };
 
 class TSuite : public TestSuite {
 public:
-	TSuite(TestObject* parent) : TestSuite(__func__,parent) {}
-
-	void beforeTest() override {
+	TSuite(TestObject* parent) : TestSuite(__func__,parent) {
 		new Tu1(this);
 		new Tu2(this);
 	}
 };
 
 int main() {
-
-	TestRunner   tr;
+	TestRunner tr;
 	new TSuite(&tr);
 	tr.run();
 

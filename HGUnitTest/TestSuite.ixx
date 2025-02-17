@@ -1,5 +1,5 @@
 export module TestSuite;
-
+import <memory>;
 import <string>;
 import TestObject;
 

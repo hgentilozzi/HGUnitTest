@@ -1,5 +1,5 @@
 export module TestSection;
-
+import <memory>;
 import <string>;
 import TestObject;
 
