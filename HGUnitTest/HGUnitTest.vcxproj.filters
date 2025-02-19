@@ -15,19 +15,7 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="TestObject.ixx">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="TestRunner.ixx">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="TestUnit.ixx">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="TestSuite.ixx">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="TestSection.ixx">
+    <ClCompile Include="src\TestObject.ixx">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

@@ -6,73 +6,78 @@ import <chrono>;
 import <memory>;
 
 using namespace std::chrono;
+
 export class TestObject {
 public:
 
 	enum TestTypes { Section, Unit, Suite, Runner};
 	TestObject() = default;
 
-	TestObject(std::string name, TestTypes type, TestObject* parent=nullptr)
-		: m_Name(name) , m_Type(type), m_NumFails(0), m_Parent(parent)
+	TestObject(std::string name, TestTypes type, std::initializer_list<TestObject*> tests = {})
+		: m_Name(name), m_Type(type), m_NumFails(0)
 	{
 		m_NumTests = 0;
 		m_NumFails = 0;
 
-		if (m_Parent != nullptr)
-			m_Parent->addTest(this);
+		for (auto test : tests) {
+			addTest(test);
+		}
 	}
 
-	virtual ~TestObject() = default;
+	virtual ~TestObject() {
+		for (auto t : m_SubTests) {
+			delete t;
+		}
+
+		m_SubTests.clear();
+	}
 
 	void run(int level = 0) {
 
 		m_Level = level;
 		auto beg = high_resolution_clock::now();
-		
+
 		std::printf("%*s%s:%s Begin\n", level, "", Type2Name().c_str(), m_Name.c_str());
 
 		if (m_Type == Section) {
 			m_NumTests = 1;
 			beforeTest();
-			runTest(level+1);
+			runTest(level + 1);
 			afterTest();
-		}	
-		
+		}
+
 		for (auto& tu : m_SubTests) {
 			tu->beforeTest();
 			tu->run(level + 1);
 			tu->afterTest();
 			m_NumFails += tu->numFails();
-			m_NumTests += (int) tu->numTests();
+			m_NumTests += (int)tu->numTests();
 		}
 
 		auto end = high_resolution_clock::now();
 		std::chrono::duration<float> dur = end - beg;
 
-		std::printf("%*s%s:%s End. #Test=%d #Fails=%d Elp=%fs\n", 
+		std::printf("%*s%s:%s End. #Test=%d #Fails=%d Elp=%fs\n",
 			level, "", Type2Name().c_str(), m_Name.c_str(), m_NumTests, m_NumFails, dur.count());
 	}
 
-	void addTest(TestObject* to) {
+	void addTest(TestObject* to)
+	{
 		m_SubTests.push_back(to);
 	}
 
-	auto numTests() {
+	auto numTests()
+	{
 		return m_NumTests;
 	}
-	auto numFails() {
+
+	auto numFails()
+	{
 		return m_NumFails;
 	}
 
-	std::string& getName() { return m_Name; }
-
-	//TestObject* getParent() {
-	//	return m_Parent;
-	//}
-
-	//void setParent(TestObject* parent) {
-	//	m_Parent = parent;
-	//}
+	std::string& getName()
+	{ return m_Name; }
 
 	// virtuals
 	virtual void beforeTest() {};
@@ -121,7 +126,6 @@ protected:
 	int m_NumTests;
 	int m_NumFails;
 	int m_Level;
-	TestObject* m_Parent;
 	std::vector<TestObject*> m_SubTests;
 
 	const std::string Type2Name() const {
@@ -138,5 +142,25 @@ protected:
 
 		return "Invalid";
 	}
+
 };
 
+export class TestRunner : public TestObject {
+public:
+	TestRunner(std::initializer_list<TestObject*> tests) : TestObject("", TestTypes::Runner, tests) {}
+};
+
+export class TestSection : public TestObject {
+public:
+	TestSection(std::string name) : TestObject(name, TestTypes::Section) {}
+};
+
+export class TestSuite : public TestObject {
+public:
+	TestSuite(std::string name, std::initializer_list<TestObject*> tests) : TestObject(name, TestTypes::Suite, tests) {}
+};
+
+export class TestUnit : public TestObject {
+public:
+	TestUnit(std::string name, std::initializer_list<TestObject*> tests) : TestObject(name, TestTypes::Unit, tests) {}
+};
